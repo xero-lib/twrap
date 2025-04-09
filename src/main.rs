@@ -14,9 +14,21 @@ fn main() {
         "[" | "]" => wrap_it(count, message, "[", "]"),
         "<" | ">" => wrap_it(count, message, "<", ">"),
         "{" | "}" => wrap_it(count, message, "{", "}"),
-        x if x.starts_with("rev") => wrap_it(count, message, &x.split_once("rev").unwrap().1, &x.split_once("rev").unwrap().1.chars().rev().collect::<String>()),
+        x if x.starts_with("rev") => {
+            let patt = x.split_once("rev").unwrap().1;
+            wrap_it(count, message, patt, &reverse_it(patt))
+        },
         x @ _ => wrap_it(count, message, x, x)
     };
+
+    // let output = wrap_it(count, message, match pattern.as_str() {
+    //     "(" | ")" => "(", ")" ,
+    //     "[" | "]" => "[", "]",
+    //     "<" | ">" => "<", ">",
+    //     "{" | "}" =  "{", "}",
+    //     x if x.starts_with("rev") => &x.split_once("rev").unwrap().1, &x.split_once("rev").unwrap().1.chars().rev().collect::<String>(),
+    //     x @ _ => wrap_it(count, message, x, x)
+    // };
 
     println!("{output}");
 
@@ -30,4 +42,18 @@ fn wrap_it(count: i16, mut message: String, start: &str, end: &str) -> String {
     }
 
     message
+}
+
+fn reverse_it(thing: &str) -> String {
+    thing.chars().rev().map(|c| match c {
+        '(' => ')',
+        '[' => ']',
+        '<' => '>',
+        '{' => '}',
+        ')' => '(',
+        ']' => '[',
+        '>' => '<',
+        '}' => '{',
+        _ => c,
+    }).collect()
 }
